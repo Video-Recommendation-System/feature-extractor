@@ -1,3 +1,4 @@
+from __future__ import print_function
 from google.cloud import language
 from google.cloud.language import enums
 from google.cloud.language import types
@@ -19,7 +20,7 @@ def main():
     titles = data["video_title"]
     for x in range(0, len(descriptions)):
         text = descriptions.iloc[x]
-        print titles[x]
+        print(titles[x])
 
         document = types.Document(
             content = text,
@@ -33,14 +34,11 @@ def main():
     data["sentiment"] = sentiments
     data["classifications"] = classifications
 
-    print data
+    print(data)
     data.to_csv(output_file, index=False)
 
-
 def get_sentiment(client, document):
-    a = client.analyze_sentiment(document=document)
-
-    return a.document_sentiment.magnitude
+    return client.analyze_sentiment(document=document).document_sentiment.magnitude
 
 def get_classification(client, document):
     return client.classify_text(document)
