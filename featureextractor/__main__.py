@@ -39,12 +39,16 @@ def main():
 
     for classification in unique_classifications:
         column = []
-        for categories_set in data["classifications"]:
+        for x in range(0, len(data["classifications"])):
+            categories_set = data["classifications"].iloc[x]
             any_match = False
             for category_pair in categories_set:
-                if category_pair[0] == classification:
-                    column.append(category_pair[1])
-                    any_match = True
+                if classification in category_pair[0]:
+                    if len(column) == x + 1:
+                        column[x] = category_pair[1]
+                    else:
+                        column.append(category_pair[1])
+                        any_match = True
             if not any_match:
                 column.append(0.0)
 
