@@ -18,6 +18,7 @@ def main():
     classifications = []
     descriptions = data["description"]
     titles = data["video_title"]
+    unique_classifications = set()
     for x in range(0, len(descriptions)):
         text = descriptions.iloc[x]
         print(titles[x])
@@ -29,10 +30,25 @@ def main():
         categories = []
         for category in get_classification(client, document).categories:
             categories.append((category.name.encode("utf-8"), category.confidence))
+            unique_classifications.add(category.name.encode("utf-8"))
+
         classifications.append(categories)
 
     data["sentiment"] = sentiments
     data["classifications"] = classifications
+
+    for classification in unique_classifications:
+        column = []
+        for categories_set in data["classifications"]:
+            any_match = False
+            for category_pair in categories_set:
+                if category_pair[0] == classification:
+                    column.append(category_pair[1])
+                    any_match = True
+            if not any_match:
+                column.append(0.0)
+
+        data[classification] = column
 
     print(data)
     data.to_csv(output_file, index=False)
