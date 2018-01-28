@@ -22,17 +22,20 @@ def main():
     for x in range(0, len(descriptions)):
         text = descriptions.iloc[x]
         print(titles[x])
+        if type(text) == str and len(text) > 0:
+            document = types.Document(
+                content = text,
+                type = enums.Document.Type.PLAIN_TEXT)
+            sentiments.append(get_sentiment(client, document))
+            categories = []
+            for category in get_classification(client, document):
+                categories.append((category.name.encode("utf-8"), category.confidence))
+                unique_classifications.add(category.name.encode("utf-8"))
 
-        document = types.Document(
-            content = text,
-            type = enums.Document.Type.PLAIN_TEXT)
-        sentiments.append(get_sentiment(client, document))
-        categories = []
-        for category in get_classification(client, document):
-            categories.append((category.name.encode("utf-8"), category.confidence))
-            unique_classifications.add(category.name.encode("utf-8"))
-
-        classifications.append(categories)
+            classifications.append(categories)
+        else:
+            sentiments.append(0.0)
+            classifications.append([])
 
     data["sentiment"] = sentiments
     data["classifications"] = classifications
