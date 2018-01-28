@@ -28,7 +28,7 @@ def main():
             type = enums.Document.Type.PLAIN_TEXT)
         sentiments.append(get_sentiment(client, document))
         categories = []
-        for category in get_classification(client, document).categories:
+        for category in get_classification(client, document):
             categories.append((category.name.encode("utf-8"), category.confidence))
             unique_classifications.add(category.name.encode("utf-8"))
 
@@ -61,7 +61,10 @@ def get_sentiment(client, document):
     return client.analyze_sentiment(document=document).document_sentiment.magnitude
 
 def get_classification(client, document):
-    return client.classify_text(document)
+    try:
+        return client.classify_text(document).categories
+    except Exception:
+        return []
 
 if __name__ == "__main__":
     main()
